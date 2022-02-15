@@ -15,7 +15,7 @@ template <class T>
 Stack<T>::Stack()
 {
   // complete your implementation below
-  
+  items = new T[DEFAULTCAPACITY];
 }
 
 /*
@@ -25,7 +25,8 @@ template <class T>
 Stack<T>::~Stack()
 {
   // complete your implementation below
-  
+  delete[] items;
+  items = NULL;
 }
 
 /*
@@ -41,7 +42,10 @@ Stack<T>::~Stack()
 template <class T>
 void Stack<T>::Push(const T& item) {
   // complete your implementation below
-  
+  if (Size() + 1 > Capacity()) {
+     Resize(Capacity() * EXPANSIONFACTOR);
+  }
+  items[Size() + 1] = item;
 };
 
 /*
@@ -57,7 +61,13 @@ void Stack<T>::Push(const T& item) {
 template <class T>
 T Stack<T>::Pop() {
   // complete your implementation below
+  T top = items[Size() - 1];
+
+  if (Size() < 1 / SHRINKRATE) {
+    Resize(max(max_items / EXPANSIONFACTOR, DEFAULTCAPACITY));
+  }
   
+  return top;
 };
 
 /*

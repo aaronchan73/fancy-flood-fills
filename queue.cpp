@@ -16,7 +16,7 @@ template <class T>
 void Queue<T>::Enqueue(T const& item)
 {
   // complete your implementation below
-  
+  stack_1 = 
 }
 
 /*

@@ -84,11 +84,22 @@ T Queue<T>::Remove()
 template <class T>
 T Queue<T>::Peek()
 {
-  T front = stack_2.Pop();
-  stack_2.Push(front);
+  // T front = stack_2.Pop();
+  // stack_2.Push(front);
   
   // complete your implementation below
-  return front;
+  // if(!stack_2.IsEmpty()) {
+  //   return stack_2.Peek();
+  // }
+
+  if (stack_2.IsEmpty()) {
+    while (!stack_1.IsEmpty()) {
+      stack_2.Push(stack_1.Pop());
+    }
+    return stack_2.Peek();
+  } else {
+    return stack_2.Peek();
+  }
 }
 
 /*

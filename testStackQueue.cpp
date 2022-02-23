@@ -24,9 +24,11 @@ TEST_CASE("Stack::basic functions", "[weight=1][part=stack]") {
   for (int i = 10; i > 0; i--) {
     expected.push_back(i);
   }
+  cout << expected.capacity() << endl;
   for (int i = 1; i <= 10; i++) {
     intStack.Push(i);
   cout << intStack.Peek() << endl;
+  cout << intStack.Capacity() << endl;
   }
   // cout << intStack.Peek() << endl;
   while (!intStack.IsEmpty()) {

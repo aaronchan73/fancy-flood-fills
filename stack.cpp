@@ -28,7 +28,6 @@ Stack<T>::~Stack()
 {
   // complete your implementation below
   delete[] items;
-  items = NULL;
 }
 
 /*
@@ -44,10 +43,11 @@ Stack<T>::~Stack()
 template <class T>
 void Stack<T>::Push(const T& item) {
   // complete your implementation below
-  if (Size() + 1 > Capacity()) {
+  if (Size() == Capacity()) //checks if num of items is full
+   {
     Resize(Capacity() * EXPANSIONFACTOR);
   }
-  items[Size()] = item;
+  items[num_items] = item;
   num_items++;
 };
 
@@ -65,12 +65,12 @@ template <class T>
 T Stack<T>::Pop() {
   // complete your implementation below
   T top = items[Size() - 1];
-  T* newArray = new T[Capacity()];
-  for (size_t i = 0; i < Size() - 1; i++) {
-    newArray[i] = items[i];
-  }
-  delete[] items;
-  items = newArray;
+  // T* newArray = new T[Capacity()];
+  // for (size_t i = 0; i < Size() - 1; i++) {
+  //   newArray[i] = items[i];
+  // }
+  // delete[] items;
+  // items = newArray;
   num_items--;
   if (Size() < (1.0 / SHRINKRATE)) {
     Resize(fmax(max_items / EXPANSIONFACTOR, DEFAULTCAPACITY));
@@ -171,7 +171,7 @@ template <class T>
 void Stack<T>::Resize(size_t n) {
   // complete your implementation below
   T* newArray = new T[n];
-  for (size_t i = 0; i < Size(); i++) {
+  for (size_t i = 0; i < num_items; i++) {
     newArray[i] = items[i];
   }
   delete[] items;

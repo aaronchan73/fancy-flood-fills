@@ -100,7 +100,6 @@ class PriorityNeighbours {
 
   private:
     /* YOU CAN DECLARE YOUR PRIVATE FUNCTIONS HERE */
-
 };
 
 #endif

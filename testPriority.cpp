@@ -32,6 +32,7 @@ TEST_CASE("PriorityNeighbours::insertion_removal_isempty", "[weight=1][part=prio
   PixelPoint pp2(30, 45, HSLAPixel(120, 0.25, 0.75)); // priority #2, longer distance from reference point
   PixelPoint pp3(35, 45, HSLAPixel(120, 0.25, 0.75)); // priority #3, same distance as pp2 and same y-coordinate
   PixelPoint pp4(16, 12, HSLAPixel(30, 0.9, 0.1)); // priority #4, long distance from reference point
+  // pp2 pp3 pp1 pp4
 
   // get the expected priority order
   expected.push_back(pp1);
@@ -46,8 +47,21 @@ TEST_CASE("PriorityNeighbours::insertion_removal_isempty", "[weight=1][part=prio
   pn.Insert(pp3);
   pn.Insert(pp2);
 
+
   while (!pn.IsEmpty()) {
     result.push_back(pn.Remove());
   }
+
+  cout << result[0].color << endl;
+  cout << result[1].color << endl;
+  cout << result[2].color << endl;
+  cout << result[3].color << endl;
+  
+  cout << expected[0].color << endl;
+  cout << expected[1].color << endl;
+  cout << expected[2].color << endl;
+  cout << expected[3].color << endl;
+  
+
   REQUIRE(result == expected);
 }

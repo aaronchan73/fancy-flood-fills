@@ -66,7 +66,8 @@ T Queue<T>::Remove()
   // Hint: this function should call a Queue
   // function to remove an element from the Queue and return it. You will
   // need to replace the following line.
-  Dequeue();
+  T top = Dequeue();
+  return top;
 }
 
 /*

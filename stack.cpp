@@ -16,6 +16,8 @@ Stack<T>::Stack()
 {
   // complete your implementation below
   items = new T[DEFAULTCAPACITY];
+  num_items = 0;
+  max_items = DEFAULTCAPACITY;
 }
 
 /*
@@ -26,7 +28,6 @@ Stack<T>::~Stack()
 {
   // complete your implementation below
   delete[] items;
-  items = NULL;
 }
 
 /*
@@ -43,9 +44,10 @@ template <class T>
 void Stack<T>::Push(const T& item) {
   // complete your implementation below
   if (Size() + 1 > Capacity()) {
-     Resize(Capacity() * EXPANSIONFACTOR);
+    Resize(Capacity() * EXPANSIONFACTOR);
   }
   items[Size() + 1] = item;
+  num_items++;
 };
 
 /*
@@ -61,18 +63,19 @@ void Stack<T>::Push(const T& item) {
 template <class T>
 T Stack<T>::Pop() {
   // complete your implementation below
-  int size = Size();
+  size_t size = Size();
   T top = items[size - 1];
   T* newArray = new T[size - 1];
-  for (int i = 0; i < size - 1; i++) {
+  for (size_t i = 0; i < size - 1; i++) {
     newArray[i] = items[i];
   }
   items = newArray;
   size = Size();
   if (size < 1 / SHRINKRATE) {
-    Resize(max(max_items / EXPANSIONFACTOR, DEFAULTCAPACITY));
+    Resize(fmax(max_items / EXPANSIONFACTOR, DEFAULTCAPACITY));
+    max_items = fmax(max_items / EXPANSIONFACTOR, DEFAULTCAPACITY);
   }
-  
+  num_items--;
   return top;
 };
 
@@ -102,8 +105,8 @@ T Stack<T>::Remove()
   // complete your implementation below
   // Hint: this should call another Stack function
   //   to remove an element from the Stack and return it.
-  Pop();
-  
+  T top = Pop();
+  return top;
 }
 
 /*
@@ -145,11 +148,7 @@ bool Stack<T>::IsEmpty() const {
 template <class T>
 size_t Stack<T>::Capacity() const {
   // complete your implementation below
-  return sizeof(items)/sizeof(*items);
-
-  // total size : 12
-  // pointer size: 4
-  // 12/4 = 3 blocks
+  return max_items;
 };
 
 /*
@@ -159,11 +158,7 @@ size_t Stack<T>::Capacity() const {
 template <class T>
 size_t Stack<T>::Size() const {
   // complete your implementation below
-  int counter = 0;
-  for (T item : items) {
-    counter++;
-  }
-  return counter;
+  return num_items;
 };
 
 /*
@@ -177,8 +172,10 @@ template <class T>
 void Stack<T>::Resize(size_t n) {
   // complete your implementation below
   T* newArray = new T[n];
-  for (int i = 0; i < Size(); i++) {
+  for (size_t i = 0; i < Size(); i++) {
     newArray[i] = items[i];
   }
   items = newArray;
+  delete[] newArray;
+  max_items = n;
 };

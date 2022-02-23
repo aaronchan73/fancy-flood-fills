@@ -42,11 +42,11 @@ TEST_CASE("PriorityNeighbours::insertion_removal_isempty", "[weight=1][part=prio
 
   // put the PixelPoint objects into your PriorityNeighbours collection in some order
   // (feel free to change the insertion order)
+
   pn.Insert(pp4);
   pn.Insert(pp1);
   pn.Insert(pp3);
   pn.Insert(pp2);
-
 
   while (!pn.IsEmpty()) {
     result.push_back(pn.Remove());

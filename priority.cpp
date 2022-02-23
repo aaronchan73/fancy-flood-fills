@@ -93,7 +93,7 @@ PixelPoint PriorityNeighbours::Remove() {
 
   for (int i = 0; i < points.size(); i++) {
     if (points[i] == pp) {
-      swap(points[points.size() - 1], pp);
+      swap(points[points.size() - 1], points[i]);
       points.pop_back();
       break;
     }

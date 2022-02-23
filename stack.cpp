@@ -72,7 +72,7 @@ T Stack<T>::Pop() {
   // delete[] items;
   // items = newArray;
   num_items--;
-  if (Size() < (1.0 / SHRINKRATE)) {
+  if (Size() < (max_items / SHRINKRATE)) {
     Resize(fmax(max_items / EXPANSIONFACTOR, DEFAULTCAPACITY));
   }
   return top;
@@ -170,11 +170,13 @@ size_t Stack<T>::Size() const {
 template <class T>
 void Stack<T>::Resize(size_t n) {
   // complete your implementation below
-  T* newArray = new T[n];
-  for (size_t i = 0; i < num_items; i++) {
-    newArray[i] = items[i];
+  if (n >= num_items) {
+    T* newArray = new T[n];
+    for (size_t i = 0; i < num_items; i++) {
+      newArray[i] = items[i];
+    }
+    delete[] items;
+    items = newArray;
+    max_items = n;
   }
-  delete[] items;
-  items = newArray;
-  max_items = n;
 };

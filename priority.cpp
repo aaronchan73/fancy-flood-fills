@@ -75,36 +75,27 @@ PixelPoint PriorityNeighbours::Remove() {
   // complete your implementation below
 
   // min dist > min y-coord > min x-coord
-  PixelPoint pp;
-  int dist = pp.color.dist(refcolor);
-  int y_coord = pp.y;
-  int x_coord = pp.x;
+  PixelPoint pp = points[0];
+  
   if (!IsEmpty()) {
-    for (size_t i = 1; i < points.size(); i++) {
-      //case 1
-       if (points[i].color.dist(refcolor) < dist) {
-         dist = points[i].color.dist(refcolor);
-         pp = points[i];
-       }
-
-  //     //case 2
-  //      else if (points[i].color.dist(refcolor) == dist) { // same as min distance
-  //          if (points[i].y < y_coord) {
-  //            pp = points[i];
-  //          } else if (points[i].y == y_coord) {
-  //            if (points[i].x < x_coord) {
-  //              pp = points[i];
-  //            }
-  //          }
-  //       }
-  //     }
-  //   }
-  for (size_t i = 0; i < points.size(); i++) {
-    if (points[i] == pp) {
-      swap(pp, points[points.size() - 1]);
-      points.pop_back();
+    for (int i = 1; i < points.size(); i++) {
+      if (points[i].color.dist(refcolor) < pp.color.dist(refcolor)) { // new minimum dist
+        pp = points[i];
+      } else if (points[i].color.dist(refcolor) == pp.color.dist(refcolor)) { // same as old dist
+        if (points[i].y < pp.y) { // new minimum y-coord
+          pp = points[i];
+        } else if (points[i].y == pp.y && points[i].x < pp.x) { // same y-coord, new minimum x-coord
+          pp = points[i];
+        }
+      }
     }
   }
+
+  for (int i = 0; i < points.size(); i++) {
+    if (points[i] == pp) {
+      swap(points[points.size() - 1], pp);
+      points.pop_back();
+      break;
     }
   }
   return pp;

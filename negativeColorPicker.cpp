@@ -9,11 +9,16 @@
 NegativeColorPicker::NegativeColorPicker(PNG& inputimg)
 {
   // complete your implementation below
-  
+  img = inputimg;
 }
-
+// pixelpoint is a point on the image
 HSLAPixel NegativeColorPicker::operator()(PixelPoint p)
 {
   // complete your implementation below
-  
+  HSLAPixel pixel;
+  pixel.h = (p.color.h + 180) % 360;
+  pixel.s = p.color.s;
+  pixel.l = 1 - p.color.l;
+  pixel.a = p.color.a;
+  return pixel;
 }

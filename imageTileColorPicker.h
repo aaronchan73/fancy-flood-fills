@@ -40,6 +40,7 @@ class ImageTileColorPicker : public ColorPicker
 
   private:
     PNG img_other;   // image from which colors will be taken
+    PNG img_main;
 };
 
 #endif

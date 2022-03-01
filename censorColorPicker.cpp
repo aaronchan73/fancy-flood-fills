@@ -24,7 +24,7 @@ double PointDistance(PixelPoint a, PixelPoint b) {
   return sqrt(diff_x * diff_x + diff_y * diff_y);
 }
 
-HSLAPixel computeAvg(PNG image, unsigned int xStart, unsigned int yStart, unsigned int blockwidth) {
+void CensorColorPicker::computeAvg(PNG image, unsigned int xStart, unsigned int yStart) {
   double hue = 0;
   double sat = 0;
   double lum = 0;
@@ -48,21 +48,24 @@ HSLAPixel computeAvg(PNG image, unsigned int xStart, unsigned int yStart, unsign
   // cout << lum << endl;
   // cout << alp << endl;
 
-  HSLAPixel pixel(hue, sat, lum, alp);
-  return pixel;
+  HSLAPixel *pixel = new HSLAPixel(hue, sat, lum, alp);
+  newPixel = *pixel;
+  delete pixel;
 }
 
-PNG mosaic(PNG image, unsigned int blockwidth) {
-  PNG newImage(image.width(), image.height());
+void CensorColorPicker::mosaic(PNG image) {
+  PNG *mosaic = new PNG(image.width(), image.height());
   for (unsigned int x = 0; x < image.width(); x++) {
     for (unsigned int y = 0; y < image.height(); y++) {
       int xStart = x - (x % blockwidth);
       int yStart = y - (y % blockwidth);
-      HSLAPixel avgPixel  = computeAvg(image, xStart, yStart, blockwidth);
-      *newImage.getPixel(x, y) = avgPixel;
+      computeAvg(image, xStart, yStart);
+      HSLAPixel avgPixel  = newPixel;
+      *(*mosaic).getPixel(x, y) = avgPixel;
     }
   }
-  return newImage;
+  newImage = *mosaic;
+  delete mosaic;
 }
 
 CensorColorPicker::CensorColorPicker(unsigned int b_width, PixelPoint ctr, unsigned int rad, PNG& inputimage)
@@ -72,7 +75,8 @@ CensorColorPicker::CensorColorPicker(unsigned int b_width, PixelPoint ctr, unsig
   center = ctr;
   radius = rad;
   img = inputimage;
-  blockyimg = mosaic(img, blockwidth);
+  mosaic(img);
+  blockyimg = newImage;
 }
 
 HSLAPixel CensorColorPicker::operator()(PixelPoint p)

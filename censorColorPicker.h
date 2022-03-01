@@ -53,12 +53,18 @@ class CensorColorPicker : public ColorPicker
     */
     virtual HSLAPixel operator()(PixelPoint p);
 
+    void mosaic(PNG image);
+
+    void computeAvg(PNG image, unsigned int xStart, unsigned int yStart);
+
   private:
     unsigned int blockwidth; // width of a mosaic block in pixels.
     PixelPoint center;       // middle/center point of mosaic area
     unsigned int radius;     // maximum pixel distance away from center where the mosaic color will be applied
     PNG img;                 // Original image used in flood fill algorithm
     PNG blockyimg;           // fully block-ified version of the original image, computed once at creation time
+    PNG newImage;
+    HSLAPixel newPixel;
 };
 
 #endif

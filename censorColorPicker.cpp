@@ -29,6 +29,7 @@ HSLAPixel computeAvg(PNG image, unsigned int xStart, unsigned int yStart, unsign
   double sat = 0;
   double lum = 0;
   double alp = 0;
+  // cout << image.getPixel(xStart,yStart) -> h << endl;
   for (unsigned int x = xStart; x < blockwidth; x++) {
     for (unsigned int y = yStart; y < blockwidth; y++) {
       hue += image.getPixel(x, y)->h;
@@ -42,25 +43,26 @@ HSLAPixel computeAvg(PNG image, unsigned int xStart, unsigned int yStart, unsign
   lum = lum / (blockwidth^2);
   alp = alp / (blockwidth^2);
 
-  HSLAPixel *pixel = new HSLAPixel(hue, sat, lum, alp);
-  HSLAPixel pixelValue = *pixel;
-  delete pixel;
-  return pixelValue;
+  // cout << hue << endl;
+  // cout << sat << endl;
+  // cout << lum << endl;
+  // cout << alp << endl;
+
+  HSLAPixel pixel(hue, sat, lum, alp);
+  return pixel;
 }
 
 PNG mosaic(PNG image, unsigned int blockwidth) {
-  PNG *newImage = new PNG(image.width(), image.height());
+  PNG newImage(image.width(), image.height());
   for (unsigned int x = 0; x < image.width(); x++) {
     for (unsigned int y = 0; y < image.height(); y++) {
       int xStart = x - (x % blockwidth);
       int yStart = y - (y % blockwidth);
-      HSLAPixel avgPixel = computeAvg(image, xStart, yStart, blockwidth);
-      *(*newImage).getPixel(x, y) = avgPixel;
+      HSLAPixel avgPixel  = computeAvg(image, xStart, yStart, blockwidth);
+      *newImage.getPixel(x, y) = avgPixel;
     }
   }
-  PNG returnImage = *newImage;
-  delete newImage;
-  return returnImage;
+  return newImage;
 }
 
 CensorColorPicker::CensorColorPicker(unsigned int b_width, PixelPoint ctr, unsigned int rad, PNG& inputimage)

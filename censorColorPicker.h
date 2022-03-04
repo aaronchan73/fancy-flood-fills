@@ -55,7 +55,7 @@ class CensorColorPicker : public ColorPicker
 
     void mosaic(PNG& image);
 
-    HSLAPixel computeAvg(PNG& image, unsigned int xStart, unsigned int yStart);
+    HSLAPixel computeAvg(PNG& image, unsigned int xStart, unsigned int yStart, unsigned int xBlockwidth, unsigned int yBlockwidth);
 
   private:
     unsigned int blockwidth; // width of a mosaic block in pixels.

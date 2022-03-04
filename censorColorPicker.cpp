@@ -24,23 +24,23 @@ double PointDistance(PixelPoint a, PixelPoint b) {
   return sqrt(diff_x * diff_x + diff_y * diff_y);
 }
 
-HSLAPixel CensorColorPicker::computeAvg(PNG& image, unsigned int xStart, unsigned int yStart) {
+HSLAPixel CensorColorPicker::computeAvg(PNG& image, unsigned int xStart, unsigned int yStart, unsigned int xBlockwidth, unsigned int yBlockwidth) {
   double hue = 0;
   double sat = 0;
   double lum = 0;
   double alp = 0;
-  for (unsigned int x = xStart; x < xStart + blockwidth; x++) {
-    for (unsigned int y = yStart; y < yStart + blockwidth; y++) {
+  for (unsigned int x = xStart; x < xStart + xBlockwidth; x++) {
+    for (unsigned int y = yStart; y < yStart + yBlockwidth; y++) {
       hue += image.getPixel(x, y)->h;
       sat += image.getPixel(x, y)->s;
       lum += image.getPixel(x, y)->l;
       alp += image.getPixel(x, y)->a;
     }
   }
-  hue = hue / (blockwidth * blockwidth);
-  sat = sat / (blockwidth * blockwidth);
-  lum = lum / (blockwidth * blockwidth);
-  alp = alp / (blockwidth * blockwidth);
+  hue = hue / (xBlockwidth * yBlockwidth);
+  sat = sat / (xBlockwidth * yBlockwidth);
+  lum = lum / (xBlockwidth * yBlockwidth);
+  alp = alp / (xBlockwidth * yBlockwidth);
 
   HSLAPixel *pixel = new HSLAPixel(hue, sat, lum, alp);
   HSLAPixel temp;
@@ -56,7 +56,15 @@ void CensorColorPicker::mosaic(PNG& image) {
     for (unsigned int y = 0; y < image.height(); y++) {
       int xStart = x - (x % blockwidth);
       int yStart = y - (y % blockwidth);
-      *(*mosaic).getPixel(x, y) = computeAvg(image, xStart, yStart);
+      int xBlockwidth = blockwidth;
+      int yBlockwidth = blockwidth;
+      if (x + blockwidth > image.width()) {
+        xBlockwidth = image.width() - x;
+      }
+      if (y + blockwidth > image.height()) {
+        yBlockwidth = image.height() - y;
+      }
+      *(*mosaic).getPixel(x, y) = computeAvg(image, xStart, yStart, xBlockwidth, yBlockwidth);
     }
   }
   blockyimg = *mosaic;

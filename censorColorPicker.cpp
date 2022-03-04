@@ -24,47 +24,42 @@ double PointDistance(PixelPoint a, PixelPoint b) {
   return sqrt(diff_x * diff_x + diff_y * diff_y);
 }
 
-void CensorColorPicker::computeAvg(PNG image, unsigned int xStart, unsigned int yStart) {
+HSLAPixel CensorColorPicker::computeAvg(PNG& image, unsigned int xStart, unsigned int yStart) {
   double hue = 0;
   double sat = 0;
   double lum = 0;
   double alp = 0;
-  // cout << image.getPixel(xStart,yStart) -> h << endl;
-  for (unsigned int x = xStart; x < blockwidth; x++) {
-    for (unsigned int y = yStart; y < blockwidth; y++) {
+  for (unsigned int x = xStart; x < xStart + blockwidth; x++) {
+    for (unsigned int y = yStart; y < yStart + blockwidth; y++) {
       hue += image.getPixel(x, y)->h;
       sat += image.getPixel(x, y)->s;
       lum += image.getPixel(x, y)->l;
       alp += image.getPixel(x, y)->a;
     }
   }
-  hue = hue / (blockwidth^2);
-  sat = sat / (blockwidth^2);
-  lum = lum / (blockwidth^2);
-  alp = alp / (blockwidth^2);
-
-  // cout << hue << endl;
-  // cout << sat << endl;
-  // cout << lum << endl;
-  // cout << alp << endl;
+  hue = hue / (blockwidth * blockwidth);
+  sat = sat / (blockwidth * blockwidth);
+  lum = lum / (blockwidth * blockwidth);
+  alp = alp / (blockwidth * blockwidth);
 
   HSLAPixel *pixel = new HSLAPixel(hue, sat, lum, alp);
-  newPixel = *pixel;
+  HSLAPixel temp;
+  temp = *pixel;
   delete pixel;
+  return temp;
+
 }
 
-void CensorColorPicker::mosaic(PNG image) {
+void CensorColorPicker::mosaic(PNG& image) {
   PNG *mosaic = new PNG(image.width(), image.height());
   for (unsigned int x = 0; x < image.width(); x++) {
     for (unsigned int y = 0; y < image.height(); y++) {
       int xStart = x - (x % blockwidth);
       int yStart = y - (y % blockwidth);
-      computeAvg(image, xStart, yStart);
-      HSLAPixel avgPixel  = newPixel;
-      *(*mosaic).getPixel(x, y) = avgPixel;
+      *(*mosaic).getPixel(x, y) = computeAvg(image, xStart, yStart);
     }
   }
-  newImage = *mosaic;
+  blockyimg = *mosaic;
   delete mosaic;
 }
 
@@ -75,8 +70,8 @@ CensorColorPicker::CensorColorPicker(unsigned int b_width, PixelPoint ctr, unsig
   center = ctr;
   radius = rad;
   img = inputimage;
-  mosaic(img);
-  blockyimg = newImage;
+  newimg = inputimage;
+  mosaic(newimg);
 }
 
 HSLAPixel CensorColorPicker::operator()(PixelPoint p)
@@ -86,5 +81,5 @@ HSLAPixel CensorColorPicker::operator()(PixelPoint p)
     return *blockyimg.getPixel(p.x, p.y);
   } else {
     return *img.getPixel(p.x, p.y);
-  }
+ }
 }

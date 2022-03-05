@@ -14,7 +14,7 @@ animation filler::FillBFS(FillerConfig& config) {
   // complete your implementation below
   // You should replace the following line with a
   // correct call to fill.
-  
+  return Fill<Queue>(config);
 }
 
 /*
@@ -27,7 +27,7 @@ animation filler::FillDFS(FillerConfig& config) {
   // complete your implementation below
   // You should replace the following line with a
   // correct call to fill.
-  
+  return Fill<Stack>(config);
 }
 
 /*
@@ -100,11 +100,100 @@ template <template <class T> class OrderingStructure> animation filler::Fill(Fil
   int framecount = 0; // increment after processing one pixel; used for producing animation frames (step 3 above)
   animation anim;
   OrderingStructure<PixelPoint> os;
+  PNG image = config.img;
+  PixelPoint seed = config.seedpoint;
+  ColorPicker *color = config.picker;
+  PriorityNeighbours pn = config.neighbourorder;
+  double tol = config.tolerance;
 
   // complete your implementation below
   // HINT: you will likely want to declare some kind of structure to track
   //       which pixels have already been visited
-  
 
+  anim.addFrame(image);
+
+  bool processed[image.width()][image.height()];
+
+  for (unsigned int x = 0; x < image.width(); x++) {
+    for (unsigned int y = 0; y < image.height(); y++) {
+      processed[x][y] = false;
+    }
+  }
+
+  HSLAPixel initial = *image.getPixel(seed.x, seed.y);
+  PixelPoint pt(seed.x, seed.y, initial);
+  os.Add(pt);
+  processed[seed.x][seed.y] = true;
+  *image.getPixel(seed.x, seed.y) = color->operator()(pt);
+  framecount++;
+
+  if (framecount % config.frameFreq == 0) {
+    anim.addFrame(image);
+  }
+
+  while(!os.IsEmpty()) {
+    PixelPoint pp = os.Remove();
+    unsigned int left = pp.x - 1;
+    unsigned int right = pp.x + 1;
+    unsigned int up = pp.y - 1;
+    unsigned int down = pp.y + 1;
+    
+    if (left >= 0 && left < image.width()) { // left
+      HSLAPixel leftPixel = *image.getPixel(left, pp.y);
+      PixelPoint ppLeft(left, pp.y, leftPixel);
+
+      if (!processed[left][pp.y] && leftPixel.dist(initial) <= tol) {
+        processed[left][pp.y] = true;
+        pn.Insert(ppLeft);
+      }
+  
+    } 
+
+
+    if (right >= 0 && right < image.width()) {// right
+      HSLAPixel rightPixel = *image.getPixel(right, pp.y);
+      PixelPoint ppRight(right, pp.y, rightPixel);
+
+      if (!processed[right][pp.y] && rightPixel.dist(initial) <= tol) {
+        processed[right][pp.y] = true;
+        pn.Insert(ppRight);
+      }
+    } 
+
+    if (up >= 0 && up < image.height()) { // up
+      HSLAPixel upPixel = *image.getPixel(pp.x, up);
+      PixelPoint ppUp(pp.x, up, upPixel);
+
+      if (!processed[pp.x][up] && upPixel.dist(initial) <= tol) {
+        processed[pp.x][up] = true;
+        pn.Insert(ppUp);
+      }
+    } 
+
+    if (down >= 0 && down < image.height()) { // down
+      HSLAPixel downPixel = *image.getPixel(pp.x, down);
+      PixelPoint ppDown(pp.x, down, downPixel);
+
+      if (!processed[pp.x][down] && downPixel.dist(initial) <= tol) {
+        processed[pp.x][down] = true;
+        pn.Insert(ppDown);
+      }
+    }
+
+
+    while (!pn.IsEmpty()) {
+      PixelPoint pixelpp = pn.Remove();
+      *image.getPixel(pixelpp.x, pixelpp.y) = color->operator()(pixelpp);
+      os.Add(pixelpp);
+      framecount++;
+      if (framecount % config.frameFreq == 0) {
+        anim.addFrame(image);
+      }
+    }
+    
+  }
+  
+  
+  anim.addFrame(image);
   return anim;
 }

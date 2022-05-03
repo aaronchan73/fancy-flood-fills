@@ -1,4 +1,4 @@
-# Flood Fills
+# Fancy Flood Fills
 
 PA2 for UBC's CPSC221. 
 
